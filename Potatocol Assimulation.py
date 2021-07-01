@@ -78,11 +78,11 @@ class simBanner(object):
 if __name__ == '__main__':
     t1 = datetime.datetime.now()
     
-    a = 28 #Number of days to simulate
+    a = 28 #Number of days to simulate (Default: 28)
     b = 0 #Number of normal EMPs to start with
-    c = 4 #Number of surplus EMPs to use in simulation
-    d = 3 #Number of Svarog aid commision tickets to use in simulation
-    e = 3 #Days of cooldown before field refresh is available (Default: 3)
+    c = 5 #Number of surplus EMPs to use in simulation
+    d = 4 #Number of Svarog aid commision tickets to use in simulation
+    e = 3 #Days of cooldown before field refresh is available at start of simulation (Default: 3)
     nTrials = 100000
     
     counts = {"Seen": 0, "Captured": 0, "Sightings": [], "Capture day": []}
