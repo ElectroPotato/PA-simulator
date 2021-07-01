@@ -51,6 +51,7 @@ class simBanner(object):
         if a == '3*': 
             self.cday=self.t
             self.capA = self.countA
+            self.witness += 1
         
         assert self.aidCom >= 0
         
@@ -158,21 +159,34 @@ if __name__ == '__main__':
     countC = np.zeros([d,c])
     countA = np.zeros([d,c])
     countE = np.zeros([d,c])
-    for i in range(c):
-        for j in range(d):
-            countS[j,i], countC[j,i], countE[j,i], countA[j,i] = simNTrials(nTrials,a,b,i,j,e)
-            t4 = datetime.datetime.now()
-            print("Time elapsed: {} seconds".format((t4-t1).seconds))
+    
+    dirfils = os.listdir()
+    if 'PA-countC.pickle' in dirfils:
+        with open('PA-countS.pickle','rb') as f1:
+            countS = pickle.load(f1)
+        with open('PA-countC.pickle','rb') as f2:
+            countC = pickle.load(f2)
+        with open('PA-countE.pickle','rb') as f3:
+            countE = pickle.load(f3)
+        with open('PA-countA.pickle','rb') as f4:
+            countA = pickle.load(f4)
+    
+    else:
+        for i in range(c):
+            for j in range(d):
+                countS[j,i], countC[j,i], countE[j,i], countA[j,i] = simNTrials(nTrials,a,b,i,j,e)
+                t4 = datetime.datetime.now()
+                print("Time elapsed: {} seconds".format((t4-t1).seconds))
             
 
-    with open('PA-countS.pickle','wb') as f1:
-        pickle.dump(countS,f1)
-    with open('PA-countC.pickle','wb') as f2:
-        pickle.dump(countC,f2)
-    with open('PA-countE.pickle','wb') as f3:
-        pickle.dump(countE,f3)
-    with open('PA-countA.pickle','wb') as f4:
-        pickle.dump(countA,f4)
+        with open('PA-countS.pickle','wb') as f1:
+            pickle.dump(countS,f1)
+        with open('PA-countC.pickle','wb') as f2:
+            pickle.dump(countC,f2)
+        with open('PA-countE.pickle','wb') as f3:
+            pickle.dump(countE,f3)
+        with open('PA-countA.pickle','wb') as f4:
+            pickle.dump(countA,f4)
 
     plt.rc('font', size=26)
     plt.rc('axes', titlesize=24)
@@ -215,9 +229,6 @@ if __name__ == '__main__':
     fig.savefig('Figure {}.png'.format(str(t2)[:-7].replace(':','')))
 
 
-    
-    #t3 = datetime.datetime.now()
-    #print("Time elapsed: {} seconds".format((t3-t2).seconds))
 
     
     
