@@ -4,7 +4,7 @@
 * Simulator also assumes perfect timing such that no time-gated or capped resources are wasted.
 * nTrials: Edit this number to change the number of PA playthroughs to simulate
 * Variables a-f: Starting conditions for the simulation, as described by in-text comments
-
+* Uncomment matplotlib block to produce histograms for capture day and number of times the 3* unit appears on the field, requires module
 
 
 ## Notes:
