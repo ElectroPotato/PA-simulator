@@ -1,5 +1,5 @@
 # PA-simulator
-Simulation to determine the statistical chances of successfully capturing a 3* unit in the Protocol Assimilation system.
+Simulation to determine the statistical chances of successfully capturing a ringleader unit in the Protocol Assimilation system.
 * Simulator assumes optimal play as described by guide provided in this image. https://pbs.twimg.com/media/E5CzhbRXEAEB-XH.jpg
 * Simulator also assumes perfect timing such that no time-gated or capped resources are wasted.
 * nTrials: Edit this number to change the number of PA playthroughs to simulate
@@ -9,11 +9,14 @@ Simulation to determine the statistical chances of successfully capturing a 3* u
 
 ## Notes:
 
-* 1 extra surplus impulses corresponds to approximately an additional 0.5-1.0% chance to capture the 3* unit by the end of the cycle
-* 1 extra Svarog aid commission corresponds to approximately 1.5-2.0% chance to capture the 3* unit by the end of the cycle
-* On average, approximately 30% of users will capture the 3* unit within 28 days, while 70% of users will see the 3* unit on the field at least once
+* On average, around 30% of users will capture the ringleader unit within a 28 day cycle, while 70% of users will see the 3* unit on the field at least once
 
-A meta-analysis would be required to further properly quantify the significance of using impulses and aid commisions at levels that are higher than that which can be expected of a free to play user
+## Meta-sim results
+* 1 extra surplus impulse corresponds to approximately an additional 0.5% chance to capture the ringleader unit by the end of the cycle
+* 1 extra Svarog aid commission corresponds to approximately an additional 1.3% chance to capture the ringleader unit by the end of the cycle
+* Among users who capture the ringleader unit:
+  * Increasing the number of aid commissions to use will decrease the average impulse expense to capture.
+  * Increasing the number of extra impulses available for use has a very minor negative correlation with the average aid commission expense to capture, although this is negigible for low usage levels of both resources. 
 
 
 ## Contact 
