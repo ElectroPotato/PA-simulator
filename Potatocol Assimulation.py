@@ -19,6 +19,7 @@ class simBanner(object):
         self.e = 'e'
         self.witness = 0
         self.cday = -1
+        self.refreshCall = []
         
     def timestep(self):
         self.t += 0.5
@@ -28,6 +29,7 @@ class simBanner(object):
     def refresh(self):
         self.field = random.sample(self.pool,3)
         self.refreshCD = 3
+        self.refreshCall.append(int(self.t))
     
     def svarog(self):
         self.aidCom -= 1
@@ -85,13 +87,15 @@ if __name__ == '__main__':
     e = 3 #Days of cooldown before field refresh is available at start of simulation (Default: 3)
     nTrials = 100000
     
-    counts = {"Seen": 0, "Captured": 0, "Sightings": [], "Capture day": []}
+    counts = {"Seen": 0, "Captured": 0, "Sightings": [], "Capture day": [], "Refresh": []}
     for i in range(nTrials):
         if i != 0 and i%10000 == 0: print("Progressing, trial number {}".format(i))
         trial = simBanner(a,b,c,d,e)
         while trial.t <= trial.days:
             if trial.t != trial.days:
-                if trial.EMP == 0: 
+                if trial.EMP == 0 and trial.refreshCD == 0 and '3*' not in trial.field and '1*' not in trial.field:
+                    trial.refresh()
+                elif trial.EMP == 0: 
                     trial.timestep()
                 elif '3*' in trial.field:
                     trial.capture('3*')
@@ -113,6 +117,8 @@ if __name__ == '__main__':
                     trial.capture('1*')
                 elif trial.refreshCD == 0:
                     trial.refresh()
+                elif '2*' in trial.field and trial.EMP > 0:
+                    trial.capture('2*')
                 elif '1*' in trial.field and trial.extraE > 0:
                     trial.capture('1*','x')
                 elif '2*' in trial.field and trial.extraE > 0:
@@ -124,16 +130,17 @@ if __name__ == '__main__':
         if trial.witness > 0: counts['Seen'] += 1
         counts['Sightings'].append(trial.witness)
         if trial.cday != -1: counts["Capture day"].append(int(trial.cday))
+        counts['Refresh'] += (trial.refreshCall)
     print("Capture rate: {}/{} ({}%)\nSeen: {}/{} ({}%)".format(counts["Captured"],nTrials,
                                                                 round(counts["Captured"]/nTrials*100,2),
                                                                 counts["Seen"],nTrials,
                                                                 round(counts["Seen"]/nTrials*100,2)))
     f = counts["Capture day"].count(a)
-    print("Proportion of captures occurring on the final day: {}%\n".format(round(f/nTrials*100,2)))
+    print("Proportion of captures occurring on the final day: {}%\n".format(round(f/len(counts["Capture day"])*100,2)))
     t2 = datetime.datetime.now()
     print("Time elapsed: {} seconds".format((t2-t1).seconds))
     
-'''    
+'''
     import matplotlib.pyplot as plt
     q = list(range(max(counts['Sightings'])+1))
     p = list(range(a+1))
@@ -143,7 +150,13 @@ if __name__ == '__main__':
     plt.figure()
     plt.hist(counts['Capture day'], bins = p)
     plt.title('Capture day')
-'''              
-            
+    plt.figure()
+    plt.hist(counts['Refresh'], bins = p)
+    plt.title('Refresh days')
+    plt.show()
+    
+    t3 = datetime.datetime.now()
+    print("Time elapsed: {} seconds".format((t3-t2).seconds))
+'''
     
     
