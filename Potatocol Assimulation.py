@@ -128,7 +128,7 @@ if __name__ == '__main__':
                                                                 counts["Seen"],nTrials,
                                                                 round(counts["Seen"]/nTrials*100,2)))
     f = counts["Capture day"].count(a)
-    print("Proportion of final day captures: {}%\n".format(round(f/nTrials*100,2)))
+    print("Proportion of captures occurring on the final day: {}%\n".format(round(f/nTrials*100,2)))
     t2 = datetime.datetime.now()
     print("Time elapsed: {} seconds".format((t2-t1).seconds))
     
