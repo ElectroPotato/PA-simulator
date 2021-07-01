@@ -37,7 +37,9 @@ class simBanner(object):
         self.pool.remove(a)
         self.claims.append(a)
         self.maintain()
-        if a == '3*': self.cday=self.t
+        if a == '3*': 
+            self.cday = self.t
+            self.witness += 1
         assert self.aidCom >= 0
         
     def capture(self, doll, e = 'e'):
