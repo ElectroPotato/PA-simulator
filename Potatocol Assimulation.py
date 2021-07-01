@@ -87,6 +87,7 @@ if __name__ == '__main__':
     
     counts = {"Seen": 0, "Captured": 0, "Sightings": [], "Capture day": []}
     for i in range(nTrials):
+        if i != 0 and i%10000 == 0: print("Progressing, trial number {}".format(i))
         trial = simBanner(a,b,c,d,e)
         while trial.t <= trial.days:
             if trial.t != trial.days:
