@@ -1,5 +1,5 @@
 # PA-simulator
-Simulation to determine the statistical chances of successfully capturing a ringleader unit in the Protocol Assimilation system.
+Simulation to determine the statistical chances of successfully capturing a ringleader unit in the Protocol Assimilation system within a single 28 day cycle.
 * Simulator assumes optimal play as described by guide provided in this image. https://pbs.twimg.com/media/E5CzhbRXEAEB-XH.jpg
 * Simulator also assumes perfect timing such that no time-gated or capped resources are wasted.
 * nTrials: Edit this number to change the number of PA playthroughs to simulate
