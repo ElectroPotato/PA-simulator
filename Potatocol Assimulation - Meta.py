@@ -119,7 +119,7 @@ def simNTrials(nTrials,a,b,c,d,e = 3):
                 if trial.EMP == 0: trial.e = 'x'
                 if '3*' in trial.field and (trial.EMP > 0 or trial.extraE > 0):
                     trial.capture('3*',trial.e)
-                if len(trial.pool) <= 4:
+                elif len(trial.pool) <= 4 and trial.aidCom > 0:
                     trial.svarog()
                 elif '1*' in trial.field and trial.EMP > 0:
                     trial.capture('1*')
