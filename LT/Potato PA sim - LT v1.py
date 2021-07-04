@@ -8,10 +8,10 @@ import random
 import datetime
 import numpy as np
 
-#import pickle
+import pickle
 import os
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mtick
+#import matplotlib.ticker as mtick
 import json
 
 class simMonthly(object):
@@ -19,10 +19,9 @@ class simMonthly(object):
     def __init__(self,days,initEMP, extraE, aidCom, banner, prio, collect = 'all', resetPool = 'False'):
         self.days, self.EMP, self.extraE, self.aidCom = days, initEMP, extraE, aidCom
         self.prio = prio
-        self.m1 = "Mook1"
-        self.m2 = "Mook2"
-        self.banner = banner
-        self.fillBanner(self.banner, collect)
+        self.m1 = "Mook1*"
+        self.m2 = "Mook2*"
+        self.fillBanner(banner, collect)
         self.setPool()
         self.refresh()
         self.t = 0
@@ -37,31 +36,39 @@ class simMonthly(object):
         self.resetPool = resetPool
         
     def timestep(self):
+        #Brings simulation forward 12 hours and progresses time-gated systems
         self.t += 0.5
         if self.refreshCD > 0: self.refreshCD -= 0.5
         if self.EMP < 14 and self.t != self.days: self.EMP += 1
         
     def fillBanner(self, bn, c):
-        self.rarityCount = [0,0,0]
-        for i in bn:
-            self.rarityCount[bn[i]["Rarity"]-1] += bn[i]["Count"]
-            if c == 'all' and bn[i]["Rarity"] == 3: bn[i]["Priority"] = 5
-        bn[self.m2] = {"Count":21 - self.rarityCount[1], "Rarity": 2, "Priority": 2}
-        bn[self.m1] = {"Count":78 - self.rarityCount[0], "Rarity": 1, "Priority": 1}
+        #Fills empty space in the banner with nameless units
+        # 1 3*, 21 2*, 78 1*
+        if self.m1 not in bn: 
+            self.rarityCount = [0,0,0]
+            for i in bn:
+                self.rarityCount[bn[i]["Rarity"]-1] += bn[i]["Count"]
+                if c == 'all' and bn[i]["Rarity"] == 3: bn[i]["Priority"] = 5
+            bn[self.m2] = {"Count":21 - self.rarityCount[1], "Rarity": 2, "Desire": 0, "Priority": 2}
+            bn[self.m1] = {"Count":78 - self.rarityCount[0], "Rarity": 1, "Desire": 0, "Priority": 1}
+        
         self.b = bn
             
     def setPool(self):
+        #Create a pool list based on the banner information
+        #Also creates a smaller pool of priority units that will be used to evaluate if the goal is attained
         pool = []
-        db.write("\nCALL TO SET POOL\n")
         plist = []
         for i in self.b:
             pool.extend([i]*self.b[i]["Count"])
             if self.b[i]["Priority"] >= self.prio:
-                plist.extend([i])#* self.b[i]["Count"])
+                plist.extend([i]* self.b[i]["Desire"])
+        assert len(pool) == 100
         self.pool = pool
         self.pList = plist
         
     def refresh(self):
+        #Supply a new set of units for the field
         if len(self.pool) > 3:
             self.field = random.sample(self.pool,3)
         else: self.field = self.pool
@@ -75,8 +82,9 @@ class simMonthly(object):
         self.svarog(whale = True)
         
     def svarog(self, whale = False):
+        #Simulate an aid commission, pulling a random unit directly from the pool
+        #Whaling occurs after the tickets are expended but the goal has not been attained
         a = random.choice(self.pool)
-        db.write("{} {} aid {} pool {} {} goal\n".format(whale, self.aidCom, len(self.pool), a, self.goal))
         if whale: 
             self.wclaims.append(a)
             self.whaleAid += 1
@@ -95,8 +103,6 @@ class simMonthly(object):
         assert self.aidCom >= 0
         
     def capture(self, doll, e = 'e'):
-        db.write("{}, {} field, {} pool, \tday {}\n".format(doll,len(self.field),len(self.pool),self.t))
-        db.write("\t{}, {} extra, {} aid {} goal\n".format(self.EMP,self.extraE, self.aidCom, self.goal))
         #Attempt a capture operation, at the cost of regular or extra impulse
         #Determine rarity of unit, apply capture chance to remove from pool and add to monthly gains
         #Remove unit from field and replace
@@ -242,20 +248,21 @@ class SKK(object):
         
     def upkeep(self,emp,xmp,svr, mn):
         # Updates the impulses and aid commisions available to be used next month
+        self.monthEndRSC["Impulse"].append(self.impulse-1)
+        self.monthEndRSC["XImpulse"].append(self.extraImpulse)
+        self.monthEndRSC["AidCom"].append(self.aidCom)
+        
         self.impulse = emp
         self.extraImpulse = xmp
         self.aidCom = svr
         if mn+1 < len(self.b):
             self.extraImpulse += self.p["MonthlyExtraImpulse"][(mn+1)%len(self.p["MonthlyExtraImpulse"])]
             self.aidCom += self.p["MonthlyAidCommisions"][(mn+1)%len(self.p["MonthlyAidCommisions"])]
-        self.monthEndRSC["Impulse"].append(self.impulse)
-        self.monthEndRSC["XImpulse"].append(self.extraImpulse)
-        self.monthEndRSC["AidCom"].append(self.aidCom)
+        
         
     def LTsim(self):
         # Run banner simulations, passing forward capture related resources to the following cycle
         for mn in range(self.blen):
-            db.write("TRIAL MONTH {}\n\n".format(mn))
             self.mCap = simMonthly(self.p["Duration"],self.impulse,self.extraImpulse,self.aidCom, self.b[mn], self.prio, self.collect, self.poolReset)
             a,b,c,d,e = self.mCap.runSim()
             self.deposit(d, e)
@@ -264,78 +271,108 @@ class SKK(object):
 
 if __name__ == '__main__':
     t1 = datetime.datetime.now()
+    dirfils = os.listdir()
+    
+    with open('Params.json') as f:
+    #Import settings and whatever junk from json file
+        settingsIn = json.load(f)
+        nSKK = settingsIn["nSKK"]
+        CaptureParams = settingsIn["CaptureParams"]
+        Banners = settingsIn["Banners"]
+        DataDisplay = settingsIn["DataDisplay"]
+    xLen = list(range(len(Banners)))
     Armoury = {}
     Whaling = {}
     Wallet = []
-    random.seed(1)
-    global db
-    with open("debuglog.txt",'w') as db:
+    endRSC = {"Impulse":[0]*len(Banners), "XImpulse": [0]*len(Banners), "AidCom":[0]*len(Banners)}
         
-        with open('Params.json') as f:
-            settingsIn = json.load(f)
-            nSKK = settingsIn["nSKK"]
-            CaptureParams = settingsIn["CaptureParams"]
-            Banners = settingsIn["Banners"]
-            
-        for i in range(nSKK):
-            if i % 2500 == 0: print("Progressing, trial number {}".format(i))
-            db.write("SKK #{}\n".format(i))
-            iskk = SKK( params = CaptureParams,banners = Banners)
-            a,b,c,d = iskk.LTsim()
-            for i in a:
-                if i in Armoury: Armoury[i].append(a[i])
-                else: Armoury[i] = [a[i]]
-            for j in b:
-                if j in Whaling: Whaling[j].append(b[j])
-                else: Whaling[j] = [b[j]]
-            Wallet.append(d)
-            del iskk
+    for i in range(nSKK):
+        if i % 2500 == 0: print("Progressing, trial number {}".format(i))
+        iskk = SKK( params = CaptureParams,banners = Banners)
+        a,b,c,d = iskk.LTsim()
+        for j in b:
+            if j in Whaling: Whaling[j].append(b[j])
+            else: Whaling[j] = [b[j]]
+        for i in a:
+            if i in Armoury: Armoury[i].append(a[i])
+            else: Armoury[i] = [a[i]]
+            if i not in Whaling: Whaling[i] = []
+        Wallet.append(d)
+        for k in endRSC:
+            for h in xLen:
+                endRSC[k][h] =+ c[k][h]
+    
+    
+    with open("Armoury.pickle",'wb') as f1: pickle.dump(Armoury, f1)
+    with open("Whale additions.pickle",'wb') as f2: pickle.dump(Whaling, f2)
+    with open("End RSC.pickle",'wb') as f3: pickle.dump(endRSC, f3)
+    
+    plt.rc('axes', titlesize=26)
+    plt.rc('axes', labelsize=22)
+    plt.rc('xtick', labelsize=20)
+    plt.rc('ytick', labelsize=20)
+    
+    px = 1/plt.rcParams['figure.dpi']
+    fig, axs = plt.subplots(2,2,figsize=(DataDisplay["ImageSize"]["W"]*px,DataDisplay["ImageSize"]["H"]*px))
+    fig.suptitle("Extended time SF Capture simulation\n{} banner periods, {} simulated players".format(len(Banners), nSKK), fontsize = 30)
 
-'''
-    plt.rc('font', size=26)
-    plt.rc('axes', titlesize=24)
-    plt.rc('axes', labelsize=20)
-    plt.rc('legend', fontsize=12)
+    #Proportion of capture of ringleaders
+    #Volume of capture for other units
+    aList, wList, oList, rList, eList = [[],[]],[[],[]],[],[],[]
+    for n in Banners:
+        for p in n:
+            if n[p]["Rarity"] == 3 and p not in rList: rList.append(p)
+            elif p not in eList: eList.append(p)
+    for m in rList:
+        aList[0].append(np.round(sum(Armoury[m])/nSKK,2))
+        wList[0].append(np.round(sum(Whaling[m])/nSKK,2))
+    for h in eList:
+        aList[1].append(np.round(sum(Armoury[h])/nSKK,2))
+        wList[1].append(np.round(sum(Whaling[h])/nSKK,2))
+    b4 = axs[0,0].bar(rList,aList[0],label = 'Standard capture')
+    b5 = axs[0,0].bar(rList,wList[0],label = 'Whale capture',bottom = aList[0])
+    axs[0,0].legend(loc = 4,fontsize = 18)
+    axs[0,0].set_xticklabels(labels = rList, fontsize = 14, rotation = 65)
+    axs[0,0].bar_label(b4, fontsize = 18, label_type = 'center')
+    axs[0,0].bar_label(b5, fontsize = 18, label_type = 'center')
+    b6 = axs[1,1].bar(eList,aList[1],label = 'Standard capture')
+    b7 = axs[1,1].bar(eList,wList[1],label = 'Whale capture',bottom = aList[1])
+    axs[1,1].legend(loc = 2,fontsize = 18)
+    axs[1,1].bar_label(b6, fontsize = 18, label_type = 'center')
+    axs[1,1].bar_label(b7, fontsize = 18, padding = 4)
     
-    fig, (ax1,ax2) = plt.subplots(2,figsize=(10,15))
-    fig.suptitle("{} initial EMP\n{} trials per point".format(b,nTrials))
-    
-    ax3 = ax1.twinx()
-    ax3.set_ylim(ymin = 0)
-    ax1.set_xticks(list(range(0,c,2)))
-    ax2.set_xticks(list(range(0,c,2)))
-    
-    ax1.set_title("Capture costs")
-    ax1.set_ylabel("Impulse to capture")
-    ax3.set_ylabel("Aid to capture")
-    ax2.set_title("Capture rate")
-    ax1.set_xlabel("Surplus impulse")
-    ax2.set_xlabel("Surplus impulse")
-    for k in range(d):
-        ax1.plot(countE[k,:], label = "{} aid".format(k))
-        ax3.scatter(list(range(c)), countA[k,:], label = "{} aid".format(k), s = 50)
-        ax2.plot(countC[k,:], label = "{} aid".format(k))
-        
-    ax2.yaxis.set_major_formatter(mtick.PercentFormatter(decimals=None))
-    ax2.legend()
-    ax1.legend()
+    #Remaining resources
+    barW = DataDisplay["GroupBarWidth"]
+    xb = np.arange(len(xLen))
+    b1 = axs[0,1].bar(xb-barW,endRSC["Impulse"], width = barW, label = "Impulse")
+    b2 = axs[0,1].bar(xb,endRSC["XImpulse"], width = barW, label = "Extra impulses")
+    b3 = axs[0,1].bar(xb+barW,endRSC["AidCom"], width = barW, label = "Aid commissions")
+    axs[0,1].set_xticks(xLen)
+    axs[0,1].set_title("Remaining resources on month end")
+    axs[0,1].legend(loc = 2,fontsize = 18)
+    axs[0,1].bar_label(b1, padding = 3,fontsize=10)
+    axs[0,1].bar_label(b2, padding = 1,fontsize=10)
+    axs[0,1].bar_label(b3, padding = 2,fontsize=10)
+
+    #Whaling histogram
+    wbins = DataDisplay["WhaleBins"]
+    axs[1,0].hist(Wallet, bins = int(np.ceil(max(Wallet)/wbins)))
+    axs[1,0].set_title("Total gem expense to complete goal")
+    axs[1,0].tick_params(axis='both', which='major', labelsize=18)
+    axs[1,0].set_ylabel("Count")
+    axs[1,0].set_xlabel("#SKK, bin size {} gems".format(wbins))
     
     fig.tight_layout()
+   
     t2 = datetime.datetime.now()
-    
     dt = t2-t1
     dtm = int(dt.seconds/60)
     dts = dt.seconds % 60
     plt.text(-0.08,1.04,'Runtime: {}m{}s'.format(dtm,dts),horizontalalignment='left',
-             verticalalignment='bottom', fontsize = 16,  transform = ax1.transAxes)
+             verticalalignment='bottom', fontsize = 16,  transform = axs[0,0].transAxes)
     print("Time elapsed: {}m{}s".format(dtm,dts))
     
     fig.savefig('Figure {}.png'.format(str(t2)[:-7].replace(':','')))
-
-
-'''    
-    #t3 = datetime.datetime.now()
-    #print("Time elapsed: {} seconds".format((t3-t1).seconds))
 
     
     

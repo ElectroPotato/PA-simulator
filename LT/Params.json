@@ -1,5 +1,5 @@
 {
-	"nSKK": 50,
+	"nSKK": 100000,
 	"CaptureParams": {
 		"Duration" : 28,
 		"InitialEMP": 9,
@@ -8,57 +8,62 @@
 		"PriorityFocus": 4,
 		"PoolResetOnRLCap": false
 	},
+	"DataDisplay": {
+		"GroupBarWidth": 0.25,
+		"WhaleBins": 1000,
+		"ImageSize": {"W":1920,"H":1080}
+	},
 	"Banners": [
 		{
-			"Executioner": {"Count": 1, "Rarity": 3, "Priority": 3}
+			"Executioner": {"Count": 1, "Rarity": 3, "Desire": 1, "Desire": 1, "Priority": 3}
 		},
 		{
-			"Hunter": {"Count": 1, "Rarity": 3, "Priority": 5},
-			"Manticore": {"Count": 5, "Rarity": 2, "Priority": 4}
+			"Hunter": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
+			"Manticore": {"Count": 5, "Rarity": 2, "Desire": 2, "Priority": 4}
 		},
 		{
-			"Intruder": {"Count": 1, "Rarity": 3, "Priority": 5},
-			"Manticore": {"Count": 5, "Rarity": 2, "Priority": 4}
+			"Intruder": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
+			"Manticore": {"Count": 5, "Rarity": 2, "Desire": 2, "Priority": 4}
 		},
 		{
-			"Destroyer": {"Count": 1, "Rarity": 3, "Priority": 5},
-			"Manticore": {"Count": 4, "Rarity": 2, "Priority": 4}
+			"Destroyer": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
+			"Manticore": {"Count": 4, "Rarity": 2, "Desire": 2, "Priority": 4}
 		},
 		{
-			"Architect": {"Count": 1, "Rarity": 3, "Priority": 5},
-			"Manticore": {"Count": 4, "Rarity": 2, "Priority": 4}
+			"Architect": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
+			"Manticore": {"Count": 4, "Rarity": 2, "Desire": 2, "Priority": 4}
 		},
 		{
-			"Ouroboros": {"Count": 1, "Rarity": 3, "Priority": 5},
-			"Manticore": {"Count": 3, "Rarity": 2, "Priority": 4}
+			"Ouroboros": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
+			"Manticore": {"Count": 3, "Rarity": 2, "Desire": 2, "Priority": 4}
 		},
 		{
-			"Alchemist": {"Count": 1, "Rarity": 3, "Priority": 3},
-			"Manticore": {"Count": 3, "Rarity": 2, "Priority": 4}
+			"Alchemist": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 3},
+			"Manticore": {"Count": 3, "Rarity": 2, "Desire": 2, "Priority": 4}
 		},
 		{
-			"Dreamer": {"Count": 1, "Rarity": 3, "Priority": 3},
-			"Manticore": {"Count": 2, "Rarity": 2, "Priority": 3}
+			"Dreamer": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 3},
+			"Manticore": {"Count": 2, "Rarity": 2, "Desire": 2, "Priority": 3}
 		},
 		{
-			"Gager": {"Count": 1, "Rarity": 3, "Priority": 3},
-			"Manticore": {"Count": 2, "Rarity": 2, "Priority": 3}
+			"Gager": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 3},
+			"Manticore": {"Count": 2, "Rarity": 2, "Desire": 2, "Priority": 3}
 		},
 		{
-			"Judge": {"Count": 1, "Rarity": 3, "Priority": 5},
-			"Manticore": {"Count": 2, "Rarity": 2, "Priority": 3}
+			"Judge": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
+			"Manticore": {"Count": 2, "Rarity": 2, "Desire": 2, "Priority": 3}
 		},
 		{
-			"Agent": {"Count": 1, "Rarity": 3, "Priority": 5},
-			"Manticore": {"Count": 2, "Rarity": 2, "Priority": 3}
+			"Agent": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
+			"Manticore": {"Count": 2, "Rarity": 2, "Desire": 2, "Priority": 3}
 		},
 		{
-			"Adeline": {"Count": 1, "Rarity": 3, "Priority": 3},
-			"Manticore": {"Count": 2, "Rarity": 2, "Priority": 3}
+			"Adeline": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 3},
+			"Manticore": {"Count": 2, "Rarity": 2, "Desire": 2, "Priority": 3}
 		},
 		{
-			"Alina": {"Count": 1, "Rarity": 3, "Priority": 5},
-			"Manticore": {"Count": 2, "Rarity": 2, "Priority": 3}
+			"Alina": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
+			"Manticore": {"Count": 2, "Rarity": 2, "Desire": 2, "Priority": 3}
 		}
 	]
 
