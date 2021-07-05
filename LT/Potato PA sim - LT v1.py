@@ -294,6 +294,9 @@ if __name__ == '__main__':
         
     for i in range(nSKK):
         if i % 2500 == 0: print("Progressing, trial number {}".format(i))
+        if i % 10000 == 0:
+            t4 = datetime.datetime.now()
+            print("Time elapsed: {} seconds".format((t4-t1).seconds))    
         iskk = SKK( params = CaptureParams,banners = Banners)
         a,b,c,d = iskk.LTsim()
         for j in b:
