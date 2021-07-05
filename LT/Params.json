@@ -6,7 +6,9 @@
 		"MonthlyExtraImpulse": [16],
 		"MonthlyAidCommisions": [11],
 		"PriorityFocus": 4,
-		"PoolResetOnRLCap": false
+		"PoolResetOnRLCap": false,
+		"CollectLevel": "allRL",
+		"DesireLimit": 1
 	},
 	"DataDisplay": {
 		"GroupBarWidth": 0.25,
