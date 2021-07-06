@@ -339,11 +339,21 @@ if __name__ == '__main__':
                 endRSC[k][h] += c[k][h]
     for k in endRSC: endRSC[k] = [round(j/nSKK,2) for j in endRSC[k]]
     
-    with open("PA-LT\\Armoury.pickle",'wb') as f1: pickle.dump(Armoury, f1)
-    with open("PA-LT\\Whale additions.pickle",'wb') as f2: pickle.dump(Whaling, f2)
-    with open("PA-LT\\End RSC.pickle",'wb') as f3: pickle.dump(endRSC, f3)
-    with open("PA-LT\\Wallet.pickle",'wb') as f4: pickle.dump(Wallet, f4)
-    with open("PA-LT\\Banners.pickle",'wb') as f6: pickle.dump(Banners, f6)
+    
+    t2 = datetime.datetime.now()
+    dt = t2-t1
+    
+    dtm = int(dt.seconds/60)
+    dts = dt.seconds % 60
+    fpth = os.path.join("PA-LT","{}k SKK - {}".format(nSKK/1000, str(t2)[:-7].replace(':','')))
+    os.mkdir(fpth)
+    fpth += "\\"
+    with open(fpth + "dt.pickle",'wb') as f5: pickle.dump(dt, f5)
+    with open(fpth + "Armoury.pickle",'wb') as f1: pickle.dump(Armoury, f1)
+    with open(fpth + "Whale additions.pickle",'wb') as f2: pickle.dump(Whaling, f2)
+    with open(fpth + "End RSC.pickle",'wb') as f3: pickle.dump(endRSC, f3)
+    with open(fpth + "Wallet.pickle",'wb') as f4: pickle.dump(Wallet, f4)
+    with open(fpth + "Banners.pickle",'wb') as f6: pickle.dump(Banners, f6)
     
     plt.rc('axes', titlesize=23)
     plt.rc('axes', labelsize=22)
@@ -409,22 +419,23 @@ if __name__ == '__main__':
     axs[1,0].tick_params(axis='both', which='major', labelsize=18)
     axs[1,0].set_ylabel("Count SKK")
     axs[1,0].set_xlabel("SKK debt, bin size {} gems".format(wbins))
-    axs[1,0].set_ylim(ymin = 0, ymax = int(h1[0]*1.2))
+    axs[1,0].set_ylim(ymin = 0, ymax = int(max(h1)*1.2))
     axs[1,0].set_xlim(xmin = 0, xmax = binlim)
     
     #Whatever the hell this does, but it makes the exported image not look as stupid
     fig.tight_layout()
    
-    t2 = datetime.datetime.now()
-    dt = t2-t1
-    with open("PA-LT\\dt.pickle",'wb') as f5: pickle.dump(dt, f5)
-    dtm = int(dt.seconds/60)
-    dts = dt.seconds % 60
+    
     plt.text(-0.08,1.15,'Runtime: {}m{}s'.format(dtm,dts),horizontalalignment='left',
              verticalalignment='bottom', fontsize = 16,  transform = axs[0,0].transAxes)
     print("Time elapsed: {}m{}s".format(dtm,dts))
     
-    fig.savefig('PA-LT\\Figure {}.png'.format(str(t2)[:-7].replace(':','')))
-
+    fig.savefig(fpth + 'Figure {}.png'.format(str(t2)[:-7].replace(':','')))
+    with open(fpth + 'Figure {}.txt'.format(str(t2)[:-7].replace(':','')),'w') as fp:
+        for i in CaptureParams:
+            fp.write("{}: {}\n".format(i,CaptureParams[i]))
+        fp.write("{} players ({}%) completed all goals for free\n".format(Wallet.count(0), round(Wallet.count(0)*100/nSKK,3)))
+        fp.write("The most unlucky player was required to spend {} gems to accomplish all goals\n".format(max(Wallet)))
+        fp.write("Average gem expense: {}\n".format(round(np.mean(Wallet))))
     
     
