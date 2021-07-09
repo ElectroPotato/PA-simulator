@@ -1,23 +1,29 @@
 {
-	"nSKK": 100000,
+	"nSKK": 500000,
 	"CaptureParams": {
 		"Duration" : 28,
-		"InitialEMP": 9,
-		"MonthlyExtraImpulse": [16],
-		"MonthlyAidCommisions": [11],
-		"PriorityFocus": 4,
-		"PoolResetOnRLCap": false,
+		"InitialEMP": 10,
+		"MonthlyExtraImpulse": [11],
+		"MonthlyAidCommisions": [8],
+		"PriorityFocus": 5,
+		"PoolResetOnRLCap": true,
 		"CollectLevel": "allRL",
 		"DesireLimit": 1
 	},
 	"DataDisplay": {
-		"GroupBarWidth": 0.25,
-		"WhaleBins": 1000,
-		"ImageSize": {"W":1920,"H":1080}
+		"GroupBarWidth": 0.3,
+		"WhaleBins": 1600,
+		"ImageSize": {"W":1920,"H":2160},
+		"ImageSize2": {"W":1920,"H":1200},
+		"GemsToTickets": true,
+		"WhalePercent": true,
+		"RLFreePercent": true,
+		"RLCPSWhale": true,
+		"RLCPSPercent": true
 	},
 	"Banners": [
 		{
-			"Executioner": {"Count": 1, "Rarity": 3, "Desire": 1, "Desire": 1, "Priority": 3}
+			"Executioner": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 3}
 		},
 		{
 			"Hunter": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 5},
