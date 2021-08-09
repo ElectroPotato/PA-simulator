@@ -21,7 +21,7 @@ class simMonthly(object):
     Recieves information on what resources the player has available.
     """
     def __init__(self,days: int, initEMP: int, extraE: int, aidCom: int, 
-                 banner: dict, prio: int, collect: str = 'allRL', 
+                 banner: dict, prio: int, collect: bool = True, 
                  resetPool: bool = 'False', desireLim: int = 2):
         self.days, self.EMP, self.extraE, self.aidCom = days, initEMP, extraE, aidCom
         self.prio = prio
@@ -60,7 +60,7 @@ class simMonthly(object):
         self.rarityCount = [0,0,0]
         for i in bn:
             self.rarityCount[bn[i]["Rarity"]-1] += bn[i]["Count"]
-            if c == 'allRL' and bn[i]["Rarity"] == 3: bn[i]["Priority"] = 42
+            if c and bn[i]["Rarity"] == 3: bn[i]["Priority"] = 42
         if self.rarityCount[1] < 28:    
             bn[self.m2] = {"Count":28 - self.rarityCount[1], "Rarity": 2, "Desire": 0, "Priority": 2}
         if self.rarityCount[0] < 71:
@@ -268,7 +268,7 @@ class SKK(object):
         self.armoury = {} #Units captured using standard means
         self.whalemoury = {} #Units that would be added using whaled aid commission tickets
         self.debt = 0 #160 gems per aid commission
-        self.collect = self.p["CollectLevel"] #Parameter of whether to collect all ringleaders, or only the meta ones
+        self.collect = self.p["CollectAllRL"] #Parameter of whether to collect all ringleaders, or only follow priority list
         self.monthEndRSC = {"Impulse":[], "XImpulse": [], "AidCom":[]} #Random metrics
         self.fcRL = 0 #Count of ringleaders collected for free
         self.rlpsz = {"Impulse":[], "Aid":[], "Whale":[]}
@@ -489,8 +489,8 @@ if __name__ == '__main__':
     axs[2,0].set_xlabel("Number of ringleaders")
     axs[2,0].set_ylabel("Count SKK")
     axs[2,0].set_xlim(xmin=-0.5, xmax = rbins[-2] + 0.5)
-    axs[2,0].set_ylim(ymax = max(RLhist)*1.06, ymin = 0)
-    axs[2,0].bar_label(rlhb, fontsize = 16, label_type = 'edge', padding = 4)
+    axs[2,0].set_ylim(ymax = max(RLhist)*1.13, ymin = 0)
+    axs[2,0].bar_label(rlhb, fontsize = 13, label_type = 'edge', padding = 4, rotation = 90)
     
     #Distribution of pool sizes when ringleader is captured
     RLCPSWhale = DataDisplay["RLCPSWhale"]
@@ -505,7 +505,7 @@ if __name__ == '__main__':
     rlpb[1] = axs[2,1].bar(pcbins[:-1], rlpsh[1], bottom = rlpsh[0], label = "Free aid")
     if RLCPSWhale:
         rlpsh[2], _ = np.histogram(RLCPoolSz['Whale'], pcbins)
-        rlpb[2] = axs[2,1].bar(pcbins[:-1], rlpsh[2], bottom = rlpsh[1], label = "Whale aid")
+        rlpb[2] = axs[2,1].bar(pcbins[:-1], rlpsh[2], bottom = [rlpsh[1][i] + rlpsh[0][i] for i in range(len(rlpsh[0]))], label = "Whale aid")
     if DataDisplay["RLCPSPercent"]: 
         axs[2,1].yaxis.set_major_formatter(mticker.PercentFormatter(xmax = nRLC, decimals = 2))
     axs[2,1].set_title("Pool size during ringleader capture")
@@ -528,7 +528,7 @@ if __name__ == '__main__':
             fp.write("{}: {}\n".format(i,CaptureParams[i]))
         fp.write('\nRuntime: {}m{}s'.format(dtm,dts))
         fp.write("\n{} players ({}%) completed all goals for free\n".format(Wallet.count(0), round(Wallet.count(0)*100/nSKK,3)))
-        fp.write("The most unlucky player was required to spend {} gems to accomplish all goals\n".format(max(Wallet)))
-        fp.write("Average gem expense: {}\n".format(round(np.mean(Wallet))))
-        fp.write("Median gem expense: {}\n".format(round(np.median(Wallet))))
+        fp.write("The most unlucky player was required to spend {} {} to accomplish all goals\n".format(max(Wallet),wUnit))
+        fp.write("Average {} expense: {}\n".format(wUnit[:-1],round(np.mean(Wallet))))
+        fp.write("Median {} expense: {}\n".format(wUnit[:-1],round(np.median(Wallet))))
     
