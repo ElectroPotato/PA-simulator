@@ -1,0 +1,102 @@
+{
+	"nSKK": 200000,
+	"CaptureParams": {
+		"Duration" : 28,
+		"InitialEMP": 9,
+		"MonthlyExtraImpulse": [27,17,26,23],
+		"MonthlyAidCommisions": [6,11,6,6,6,6,6,6,6,6,6,6],
+		"PriorityMin": 2,
+		"RLPriorityMin": 8,
+		"PoolResetOnRLCap": false,
+		"CollectAllRL": true,
+		"DesireLimit": 1,
+		"Ratio1": 0.3
+	},
+	"DataDisplay": {
+		"GroupBarWidth": 0.3,
+		"WhaleBins": 10,
+		"ImageSize": {"W":2900,"H":2160},
+		"ImageSize2": {"W":1920,"H":1200},
+		"TicketsToGems": false,
+		"WhalePercent": true,
+		"RLFreePercent": true,
+		"RLCPSWhale": true,
+		"RLCPSPercent": true
+	},
+	"Banners": [
+		{
+			"Executioner": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 6},
+			"Brute": {"Count": 9, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Aegis": {"Count": 10, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Dragoon": {"Count": 9, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Ripper": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Guard": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Vespid": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Jaeger": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 2},
+			"Striker": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Scout": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Prowler": {"Count": 11, "Rarity": 1, "Desire": 0, "Priority": 1}
+		},
+		{
+			"Hunter": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 10},
+			"Manticore": {"Count": 5, "Rarity": 2, "Desire": 0, "Priority": 5},
+			"Nemeum": {"Count": 5, "Rarity": 2, "Desire": 0, "Priority": 4},
+			"Brute": {"Count": 6, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Aegis": {"Count": 6, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Dragoon": {"Count": 6, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Ripper": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Guard": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Vespid": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Jaeger": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 2},
+			"Striker": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Scout": {"Count": 10, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Prowler": {"Count": 11, "Rarity": 1, "Desire": 0, "Priority": 1}
+		},
+		{
+			"Intruder": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 7},
+			"Manticore": {"Count": 5, "Rarity": 2, "Desire": 0, "Priority": 5},
+			"Nemeum": {"Count": 5, "Rarity": 2, "Desire": 0, "Priority": 4},
+			"Brute": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Aegis": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Dragoon": {"Count": 5, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Tarantula": {"Count": 5, "Rarity": 2, "Desire": 0, "Priority": 4},
+			"Ripper": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Guard": {"Count": 9, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Vespid": {"Count": 9, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Jaeger": {"Count": 9, "Rarity": 1, "Desire": 0, "Priority": 2},
+			"Striker": {"Count": 9, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Scout": {"Count": 9, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Prowler": {"Count": 9, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Dinergate": {"Count": 9, "Rarity": 1, "Desire": 0, "Priority": 1}
+		},
+		{
+			"Destroyer": {"Count": 1, "Rarity": 3, "Desire": 1, "Priority": 10},
+			"Manticore": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 5},
+			"Nemeum": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 4},
+			"Brute": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Aegis": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Dragoon": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Tarantula": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 4},
+			"SWAP Guard": {"Count": 4, "Rarity": 2, "Desire": 0, "Priority": 1},
+			"Ripper": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Guard": {"Count": 7, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Vespid": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Jaeger": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 2},
+			"Striker": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Scout": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Prowler": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Dinergate": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 1},
+			"Jaguar": {"Count": 8, "Rarity": 1, "Desire": 0, "Priority": 2}
+		}
+		
+	]
+
+
+
+
+
+
+
+
+
+}
