@@ -3,14 +3,15 @@
 	"CaptureParams": {
 		"Duration" : 28,
 		"InitialEMP": 9,
-		"MonthlyExtraImpulse": [27,17,26,23],
+		"MonthlyExtraImpulse": [27,17,26,25],
 		"MonthlyAidCommisions": [6,11,6,6,6,6,6,6,6,6,6,6],
 		"PriorityMin": 2,
 		"RLPriorityMin": 8,
 		"PoolResetOnRLCap": false,
-		"CollectAllRL": true,
+		"CollectAllRL": false,
 		"DesireLimit": 1,
-		"Ratio1": 0.3
+		"Ratio1": 0.46,
+		"Notes": ""
 	},
 	"DataDisplay": {
 		"GroupBarWidth": 0.3,
