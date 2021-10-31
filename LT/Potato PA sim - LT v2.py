@@ -27,8 +27,9 @@ class simMonthly(object):
         self.days, self.EMP, self.extraE, self.aidCom = days, initEMP, extraE, aidCom
         self.prio = prio
         self.RLprio = RLprio
-        self.m1 = "Mook1*" #Label for nameless 1* units
-        self.m2 = "Mook2*" #Label for nameless 2* units
+        self.m1 = "Mook1*" #Label for nameless 1* units. Redundant after filling full banner.
+        self.m2 = "Mook2*" #Label for nameless 2* units. redundant after filling full banner.
+        self.RLname = "Potato"
         self.dlim = desireLim
         self.rat1 = rat1
         self.fillBanner(banner, collect)
@@ -49,6 +50,7 @@ class simMonthly(object):
         self.whaleMode = False #Check if whaling started
         
         
+        
     def timestep(self):
         """Brings simulation forward 12 hours and progresses time-gated systems."""
         self.t += 0.5
@@ -66,6 +68,7 @@ class simMonthly(object):
         for i in bn:
             self.rarityCount[bn[i]["Rarity"]-1] += bn[i]["Count"]
             if c and bn[i]["Rarity"] == 3: bn[i]["Priority"] = 42
+            if bn[i]["Rarity"] == 3: self.RLname = i
         if self.rarityCount[1] < 28:    
             bn[self.m2] = {"Count":28 - self.rarityCount[1], "Rarity": 2, "Desire": 0, "Priority": 2}
         if self.rarityCount[0] < 71:
@@ -73,22 +76,32 @@ class simMonthly(object):
         
         self.b = bn
             
-    def setPool(self):
+    def setPool(self, new: bool = True):
         """
         Create a pool list based on the banner information.
         Also creates a smaller pool of priority units that will be used to evaluate if the goal is attained.
         """
-        pool = []
-        plist = []
-        for i in self.b:
-            pool.extend([i]*self.b[i]["Count"])
-            if self.b[i]["Rarity"] <=2 and self.b[i]["Priority"] >= self.prio:
-                plist.extend([i] * min(self.b[i]["Desire"], self.dlim))
-            if self.b[i]["Rarity"] == 3 and self.b[i]["Priority"] >= self.RLprio:
-                plist.extend([i] * self.b[i]["Desire"])
-        assert len(pool) == 100
-        self.pool = pool
-        self.pList = plist
+        if new:
+            pool = []
+            plist = []
+            for i in self.b:
+                pool.extend([i]*self.b[i]["Count"])
+                if self.b[i]["Rarity"] <=2 and self.b[i]["Priority"] >= self.prio:
+                    plist.extend([i] * min(self.b[i]["Desire"], self.dlim))
+                if self.b[i]["Rarity"] == 3 and self.b[i]["Priority"] >= self.RLprio:
+                    plist.extend([i] * self.b[i]["Desire"])
+                    
+            assert len(pool) == 100
+            self.pool = pool
+            self.poolbkp = pool
+            self.pList = plist
+        else:
+            self.pool = self.poolbkp
+        
+        global glog
+        if glog:
+            global glof
+            glof.write("{}\t{}\n".format(self.pList, self.RLname))
         
     def refresh(self):
         """Supply a new set of units for the field."""
@@ -99,7 +112,7 @@ class simMonthly(object):
         
     def rPool(self):
         """Pointless function used to call 2 other functions, but in 1 line."""
-        self.setPool()
+        self.setPool(False)
         self.refresh()
         
     def whale(self):
@@ -140,6 +153,12 @@ class simMonthly(object):
         Determine rarity of unit, apply capture chance to remove from pool and add to monthly gains.
         Remove unit from field and replace.
         """
+        self.cdoll = doll
+        global glog
+        if glog:
+            global glof
+            glof.write("Attempt {} from {}. Pool count {}\n".format(self.cdoll, self.field, self.pool.count(doll)))
+        
         if not self.RL: self.RLAction += 1
         if e == 'e': self.EMP -= 1
         else: self.extraE -= 1
@@ -187,6 +206,10 @@ class simMonthly(object):
         Ensures the number of available units on the field does not exceed the number of the same unit in the pool.
         Check if capture goal is completed
         """
+        global glog
+        if glog:
+            global glof
+            glof.write("{} impulse, {} extra impulse, {} svarog\t Day {}, RL {}, Goal {}, Pool {}\n".format(self.EMP, self.extraE, self.aidCom, self.t, self.RL, self.goal, len(self.pool)))
         
         for i in self.field.copy():
             if self.field.count(i) > self.pool.count(i):
@@ -195,7 +218,7 @@ class simMonthly(object):
         #Sort field by unit priority
         self.field.sort(key = lambda n: self.b[n]["Priority"], reverse = True)
         #Check if the goal of capturing (1 or all) of units of the priority list is achieved
-        if not self.goal and (self.days - self.t) <= 7:
+        if not self.goal and (self.days - self.t) <= 12:
             k = 0
             w = (self.claims + self.wclaims).copy()
             for u in self.pList:
@@ -257,11 +280,16 @@ class simMonthly(object):
         while self.t <= self.days:
             self.maintain()
             if self.t != self.days:
-                if (self.EMP == 0 and self.refreshCD == 0 
+                if len(self.pool) == 0: self.rPool()
+                elif (self.EMP == 0 and self.refreshCD == 0 
                     and not self.priorityInField(3)): #and not self.rarityInField(1)): #Swap between refresh on no 1* or refresh if reasonable
                     self.refresh()
-                elif self.EMP == 0: 
-                    self.timestep()
+                
+                #Test to flush 1* early using extra impulses.
+                elif self.EMP == 0 and self.rarityInField(3) and self.extraE != 0 and self.RLname in self.pList and self.refreshCD == 0: self.capture(self.field[0],'x')
+                #elif self.EMP == 0 and self.rarityInField(1) and self.extraE != 0 and self.RLname in self.pList and self.RLname in self.pool: self.capture(self.splitField()[0],'x')
+                elif self.EMP == 0: self.timestep()
+                
                 elif self.priorityInField(6): #Minimum priority of RL
                     self.capture(self.field[0])
                 elif self.priorityInField(3): #2* units of interest
@@ -270,7 +298,9 @@ class simMonthly(object):
                     self.capture(self.splitField()[0])
                     
                 elif self.rarityInField(1) and not self.goal:
-                    self.capture(self.field[-1])
+                    self.capture(self.splitField()[0])
+                
+                
                 elif self.refreshCD == 0:
                     self.refresh()
                 elif self.goal and ((self.days-self.t)*2 < 14 - self.EMP):
@@ -372,6 +402,11 @@ class SKK(object):
     def LTsim(self): #-> tuple:
         """Run banner simulations, passing forward capture related resources to the following cycle"""
         for mn in range(self.blen):
+            global glog
+            if glog:
+                global glof
+                glof.write("New month\n\n")
+            
             self.mCap = simMonthly(self.p["Duration"], self.impulse, self.extraImpulse, self.aidCom,
                                    self.b[mn], self.prio, self.collect, self.poolReset, self.dlim,
                                    self.RLprio, self.rat1)
@@ -407,10 +442,15 @@ class MrPickle(object):
 if __name__ == '__main__':
     t1 = datetime.datetime.now()
     dirfils = os.listdir()
-    #random.seed(0)
+    random.seed(0)
     paramfil = "Params2trunc.json"
     
-    
+    global glog
+    glog = False
+    if glog:
+        global glof
+        glofile = "PA-LT\\jank.txt"
+        glof = open(glofile, "w") #Jank choice of creating a global file object to dump intermediate information
     
     with open(paramfil,'r') as f:
     #Import settings and whatever junk from json file
@@ -461,7 +501,7 @@ if __name__ == '__main__':
                 endRSC[k][h] += iskk.monthEndRSC[k][h]
     for k in endRSC: endRSC[k] = [round(j/nSKK,2) for j in endRSC[k]]
     
-    
+    if glog: glof.close() #lol
     
     t2 = datetime.datetime.now()
     dt = t2-t1
@@ -653,6 +693,8 @@ if __name__ == '__main__':
              verticalalignment='bottom', fontsize = 16,  transform = axs[0,0].transAxes)
     plt.text(0.95,1.12,'1* Ratio maximum to Aid: {}'.format(CaptureParams["Ratio1"]),horizontalalignment='right',
              verticalalignment='bottom', fontsize = 16,  transform = axs[0,2].transAxes)
+    plt.text(0,1.06,'{}'.format(CaptureParams["Notes"]),horizontalalignment='left',
+             verticalalignment='bottom', fontsize = 18,  transform = axs[0,0].transAxes)
     print("Time elapsed: {}m{}s".format(dtm,dts))
     
     fig.savefig(fpth + 'Figure {}.png'.format(str(t2)[:-7].replace(':','')))
